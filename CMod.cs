@@ -13,7 +13,8 @@ namespace LPLauncher
         private string m_sVersion;
         private string m_sPath;
         private string m_sModId;
-        
+        private string m_sDescription;
+        private string m_sDepends;
         private string m_sDevMsg;
 
         private string m_sFileName;
@@ -39,10 +40,18 @@ namespace LPLauncher
         public string getVersion() { return m_sVersion; }
         public string getPath() { return m_sPath; }
 
+
         public string getFileName() { return (m_sFileName == null ? m_sPath : m_sFileName); }
         public void setFileName(string s) { m_sFileName = s; }
+        
         public void setDevMessage(string s) { m_sDevMsg = s; }
         public string getDevMessage() { return m_sDevMsg; }
+        
+        public void setDescription(string s) { m_sDescription = s; }
+        public string getDescription() { return m_sDescription; }
+
+        public void setDependencies(string s) { m_sDepends = s; }
+        public string getDependencies() { return m_sDepends; }
 
         public bool isEnabled()
         {
@@ -144,6 +153,12 @@ namespace LPLauncher
                                         break;
                                     case "MODULE_UNIQUEID":
                                         m_sModId = value;
+                                        break;
+                                    case "MODULE_DESCRIPTION":
+                                        m_sDescription = value;
+                                        break;
+                                    case "MODULE_REQUIREMENTS":
+                                        m_sDepends = value;
                                         break;
                                 }
                             }

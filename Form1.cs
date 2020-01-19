@@ -89,35 +89,35 @@ namespace LPLauncher
 
                 foreach (DirectoryInfo folder in directories)
                 {
-                    // Read enabled mods
-                    try
+                    // Test if the folder contains a required info file
+                    FileInfo modFileInfo = null;
+                    if (folder.GetFiles("*.lpmod").Length>0)
                     {
-                        FileInfo modFileInfo = folder.GetFiles("*.lpmod")[0];
-
-                        string modFile = folder.Name;
-                        string modPath = modFileInfo.DirectoryName;
-
-                        CMod instMod = new CMod(modFile, modPath);
-                        instMod.setFileName(modFileInfo.FullName);
-                        instMod.readModInfo();
-                        m_ModsInstalled.Add(instMod);
+                        modFileInfo = folder.GetFiles("*.lpmod")[0];
                     }
-                    catch(Exception) {}
-
-                    // Read disabled mods
-                    try
+                    else if (folder.GetFiles("*.lpaddon").Length>0)
                     {
-                        FileInfo modFileInfo = folder.GetFiles("*.disabled")[0];
-
-                        string modFile = folder.Name;
-                        string modPath = modFileInfo.DirectoryName;
-
-                        CMod instMod = new CMod(modFile, modPath);
-                        instMod.setFileName(modFileInfo.FullName);
-                        instMod.readModInfo();
-                        m_ModsInstalled.Add(instMod);
+                        modFileInfo = folder.GetFiles("*.lpaddon")[0];
                     }
-                    catch(Exception) { }
+                    else if (folder.GetFiles("*.disabled").Length > 0)
+                    {
+                        modFileInfo = folder.GetFiles("*.disabled")[0];
+                    }
+
+                    if (modFileInfo != null)
+                    {
+                        try
+                        {
+                            string modFile = folder.Name;
+                            string modPath = modFileInfo.DirectoryName;
+
+                            CMod instMod = new CMod(modFile, modPath);
+                            instMod.setFileName(modFileInfo.FullName);
+                            instMod.readModInfo();
+                            m_ModsInstalled.Add(instMod);
+                        }
+                        catch (Exception) { }
+                    }
                 }
             }
             catch(Exception ex)
@@ -154,18 +154,34 @@ namespace LPLauncher
                     XmlNode root = repo.DocumentElement.SelectSingleNode("/Repo");
                     foreach (XmlNode modXml in root.ChildNodes)
                     {
+                        if (modXml.LocalName == "#comment")
+                            continue;
+
                         string name = modXml.Attributes["Name"].InnerText;
                         string ver = modXml.Attributes["Version"].InnerText;
                         string id = modXml.Attributes["Id"].InnerText;
                         string path = BASE_REPO_URL + modXml.Attributes["Path"].InnerText;
 
+                        CMod curMod = new CMod(id, name, ver, path);
+
                         // Test for optional message
                         string devMsg = null;
                         if( modXml.Attributes.GetNamedItem("Msg") != null )
                             devMsg = modXml.Attributes["Msg"].InnerText;
-
-                        CMod curMod = new CMod(id, name, ver, path);
                         curMod.setDevMessage(devMsg);
+
+                        // Optional description
+                        string descr = null;
+                        if (modXml.Attributes.GetNamedItem("Description") != null)
+                            descr = modXml.Attributes["Description"].InnerText;
+                        curMod.setDescription(descr);
+
+                        // Optional dependencies
+                        string deps = null;
+                        if (modXml.Attributes.GetNamedItem("Depends") != null)
+                            deps = modXml.Attributes["Depends"].InnerText;
+                        curMod.setDependencies(deps);
+                        
                         m_ModsAvailable.Add(curMod);
                         
                     }
@@ -364,12 +380,39 @@ namespace LPLauncher
         private CMod findInstalledModWithId(string id)
         {
             // TODO: If LP sometime has 1000+ mods we could switch this to a dictonary with key = id
-            foreach (CMod modInst in m_ModsAvailable)
+            foreach (CMod modInst in m_ModsInstalled)
             {
                 if (modInst.getId() == id)
                     return modInst;
             }
             return null;
+        }
+
+        private void lbAvail_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lbAvail.SelectedItem != null)
+            {
+                CMod selMod = (CMod)lbAvail.SelectedItem;
+
+                if (selMod.getDescription() == null)
+                {
+                    
+                    if( selMod.getDependencies() != null )
+                        lblModInfo.Text = "Requires: " + selMod.getDependencies();
+                    else
+                        lblModInfo.Text = "Double click a module to install / update it.";
+                }
+                else
+                {
+                    lblModInfo.Text = selMod.getDescription();
+                    if (selMod.getDependencies() != null)
+                        lblModInfo.Text += " [Requires: " + selMod.getDependencies() + "]";
+                }
+
+                
+            }
+            else
+                lblModInfo.Text = "Double click a module to install / update it.";
         }
     }
 }

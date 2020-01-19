@@ -94,6 +94,7 @@
             this.lbAvail.Name = "lbAvail";
             this.lbAvail.Size = new System.Drawing.Size(448, 386);
             this.lbAvail.TabIndex = 2;
+            this.lbAvail.SelectedIndexChanged += new System.EventHandler(this.lbAvail_SelectedIndexChanged);
             this.lbAvail.DoubleClick += new System.EventHandler(this.lbAvail_DoubleClick);
             // 
             // lbInst
