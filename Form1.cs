@@ -13,6 +13,7 @@ using System.Reflection;
 using System.IO;
 using System.Diagnostics;
 using System.IO.Compression;
+using System.Globalization;
 
 namespace LPLauncher
 {
@@ -277,14 +278,21 @@ namespace LPLauncher
             if (File.Exists("lprepo.xml"))
                 File.Delete("lprepo.xml");
 
-            if( m_sLifePlayVersionInstalled != m_sLifePlayVersionAvailable )
+            try
             {
-                DialogResult dr = MessageBox.Show("Looks like you are running an old version of LifePlay.\nShall I open the download site for you?", "LifePlay is out dated", MessageBoxButtons.YesNo);
-                if( dr == System.Windows.Forms.DialogResult.Yes )
+                float fInst = float.Parse(m_sLifePlayVersionInstalled, CultureInfo.InvariantCulture);
+                float fAvail = float.Parse(m_sLifePlayVersionAvailable, CultureInfo.InvariantCulture);
+
+                if (fInst < fAvail)
                 {
-                    Process.Start("https://f95zone.to/threads/lifeplay-v2-17-vinfamy.11321/");
+                    DialogResult dr = MessageBox.Show("Looks like you are running an old version of LifePlay.\nShall I open the download site for you?", "LifePlay is out dated", MessageBoxButtons.YesNo);
+                    if (dr == System.Windows.Forms.DialogResult.Yes)
+                    {
+                        Process.Start("https://f95zone.to/threads/lifeplay-v2-17-vinfamy.11321/");
+                    }
                 }
             }
+            catch (Exception) { }
 
         }
 
