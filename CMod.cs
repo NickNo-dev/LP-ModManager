@@ -19,6 +19,8 @@ namespace LPLauncher
 
         private string m_sFileName;
 
+        private bool m_bIsUpdated = false;
+
 
         public CMod(string name, string path)
         {
@@ -53,6 +55,8 @@ namespace LPLauncher
         public void setDependencies(string s) { m_sDepends = s; }
         public string getDependencies() { return m_sDepends; }
 
+        public void setUpdated(bool state) { m_bIsUpdated = state; }
+
         public bool isEnabled()
         {
             if (m_sFileName != null)
@@ -69,7 +73,7 @@ namespace LPLauncher
         public string getDisplayName() 
         {
             if (isRepoMod())
-                return m_sName + " " + m_sVersion;
+                return (m_bIsUpdated ? "[Updated] " : "") + m_sName + " (" + m_sVersion + ")";
             else
                 return m_sName + (m_sVersion!=null ? " (" + m_sVersion + ") " : "" ) + (isEnabled() ? "" : " [disabled]");
         }

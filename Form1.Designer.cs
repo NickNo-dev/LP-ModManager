@@ -29,8 +29,6 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.lbAvail = new System.Windows.Forms.ListBox();
             this.lbInst = new System.Windows.Forms.ListBox();
             this.lblModHint = new System.Windows.Forms.Label();
@@ -39,20 +37,31 @@
             this.tableLayoutPanelLeft = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanelBottomLeft = new System.Windows.Forms.TableLayoutPanel();
             this.btnUpdateAll = new System.Windows.Forms.Button();
+            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.lblAvailModules = new System.Windows.Forms.Label();
+            this.pbRefreshRepo = new System.Windows.Forms.PictureBox();
             this.tableLayoutPanelRight = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanelBottomRight = new System.Windows.Forms.TableLayoutPanel();
             this.btnLaunch = new System.Windows.Forms.Button();
             this.btnDelMod = new System.Windows.Forms.Button();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.lblInstalledModules = new System.Windows.Forms.Label();
+            this.pbRefreshLocal = new System.Windows.Forms.PictureBox();
             this.splitContainerHeader = new System.Windows.Forms.SplitContainer();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.lblLPVersion = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerContent)).BeginInit();
             this.splitContainerContent.Panel1.SuspendLayout();
             this.splitContainerContent.Panel2.SuspendLayout();
             this.splitContainerContent.SuspendLayout();
             this.tableLayoutPanelLeft.SuspendLayout();
             this.tableLayoutPanelBottomLeft.SuspendLayout();
+            this.tableLayoutPanel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbRefreshRepo)).BeginInit();
             this.tableLayoutPanelRight.SuspendLayout();
             this.tableLayoutPanelBottomRight.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbRefreshLocal)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerHeader)).BeginInit();
             this.splitContainerHeader.Panel1.SuspendLayout();
             this.splitContainerHeader.Panel2.SuspendLayout();
@@ -60,36 +69,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.BackColor = System.Drawing.Color.Black;
-            this.label1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.label1.ForeColor = System.Drawing.Color.White;
-            this.label1.Location = new System.Drawing.Point(3, 7);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(448, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Available modules:";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.BackColor = System.Drawing.Color.Black;
-            this.label2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.label2.ForeColor = System.Drawing.Color.White;
-            this.label2.Location = new System.Drawing.Point(3, 7);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(469, 13);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Installed modules:";
-            // 
             // lbAvail
             // 
             this.lbAvail.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.lbAvail.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lbAvail.ForeColor = System.Drawing.Color.White;
-            this.lbAvail.FormattingEnabled = true;
             this.lbAvail.Location = new System.Drawing.Point(3, 23);
             this.lbAvail.Name = "lbAvail";
             this.lbAvail.Size = new System.Drawing.Size(448, 386);
@@ -102,7 +86,6 @@
             this.lbInst.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.lbInst.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lbInst.ForeColor = System.Drawing.Color.White;
-            this.lbInst.FormattingEnabled = true;
             this.lbInst.Location = new System.Drawing.Point(3, 23);
             this.lbInst.Name = "lbInst";
             this.lbInst.Size = new System.Drawing.Size(469, 386);
@@ -156,10 +139,10 @@
             // 
             this.tableLayoutPanelLeft.ColumnCount = 1;
             this.tableLayoutPanelLeft.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanelLeft.Controls.Add(this.label1, 0, 0);
             this.tableLayoutPanelLeft.Controls.Add(this.lbAvail, 0, 1);
             this.tableLayoutPanelLeft.Controls.Add(this.lblModInfo, 0, 2);
             this.tableLayoutPanelLeft.Controls.Add(this.tableLayoutPanelBottomLeft, 0, 3);
+            this.tableLayoutPanelLeft.Controls.Add(this.tableLayoutPanel2, 0, 0);
             this.tableLayoutPanelLeft.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanelLeft.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanelLeft.Name = "tableLayoutPanelLeft";
@@ -198,14 +181,54 @@
             this.btnUpdateAll.UseVisualStyleBackColor = false;
             this.btnUpdateAll.Click += new System.EventHandler(this.btnUpdateAll_Click);
             // 
+            // tableLayoutPanel2
+            // 
+            this.tableLayoutPanel2.ColumnCount = 2;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+            this.tableLayoutPanel2.Controls.Add(this.lblAvailModules, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.pbRefreshRepo, 1, 0);
+            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+            this.tableLayoutPanel2.RowCount = 1;
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(448, 14);
+            this.tableLayoutPanel2.TabIndex = 9;
+            // 
+            // lblAvailModules
+            // 
+            this.lblAvailModules.AutoSize = true;
+            this.lblAvailModules.BackColor = System.Drawing.Color.Black;
+            this.lblAvailModules.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.lblAvailModules.ForeColor = System.Drawing.Color.White;
+            this.lblAvailModules.Location = new System.Drawing.Point(3, 1);
+            this.lblAvailModules.Name = "lblAvailModules";
+            this.lblAvailModules.Size = new System.Drawing.Size(392, 13);
+            this.lblAvailModules.TabIndex = 1;
+            this.lblAvailModules.Text = "Available modules:";
+            // 
+            // pbRefreshRepo
+            // 
+            this.pbRefreshRepo.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pbRefreshRepo.Image = global::LPLauncher.Properties.Resources.arrow_refresh_small;
+            this.pbRefreshRepo.Location = new System.Drawing.Point(398, 0);
+            this.pbRefreshRepo.Margin = new System.Windows.Forms.Padding(0);
+            this.pbRefreshRepo.Name = "pbRefreshRepo";
+            this.pbRefreshRepo.Size = new System.Drawing.Size(50, 14);
+            this.pbRefreshRepo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pbRefreshRepo.TabIndex = 2;
+            this.pbRefreshRepo.TabStop = false;
+            this.pbRefreshRepo.Click += new System.EventHandler(this.pbRefreshRepo_Click);
+            // 
             // tableLayoutPanelRight
             // 
             this.tableLayoutPanelRight.ColumnCount = 1;
             this.tableLayoutPanelRight.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanelRight.Controls.Add(this.label2, 0, 0);
             this.tableLayoutPanelRight.Controls.Add(this.lbInst, 0, 1);
             this.tableLayoutPanelRight.Controls.Add(this.lblModHint, 0, 2);
             this.tableLayoutPanelRight.Controls.Add(this.tableLayoutPanelBottomRight, 0, 3);
+            this.tableLayoutPanelRight.Controls.Add(this.tableLayoutPanel1, 0, 0);
             this.tableLayoutPanelRight.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanelRight.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanelRight.Name = "tableLayoutPanelRight";
@@ -234,7 +257,7 @@
             // 
             // btnLaunch
             // 
-            this.btnLaunch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.btnLaunch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(100)))), ((int)(((byte)(64)))));
             this.btnLaunch.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnLaunch.ForeColor = System.Drawing.Color.White;
             this.btnLaunch.Location = new System.Drawing.Point(237, 3);
@@ -258,6 +281,46 @@
             this.btnDelMod.UseVisualStyleBackColor = false;
             this.btnDelMod.Click += new System.EventHandler(this.btnDelMod_Click);
             // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.ColumnCount = 2;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+            this.tableLayoutPanel1.Controls.Add(this.lblInstalledModules, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.pbRefreshLocal, 1, 0);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 1;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(469, 14);
+            this.tableLayoutPanel1.TabIndex = 8;
+            // 
+            // lblInstalledModules
+            // 
+            this.lblInstalledModules.AutoSize = true;
+            this.lblInstalledModules.BackColor = System.Drawing.Color.Black;
+            this.lblInstalledModules.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.lblInstalledModules.ForeColor = System.Drawing.Color.White;
+            this.lblInstalledModules.Location = new System.Drawing.Point(3, 1);
+            this.lblInstalledModules.Name = "lblInstalledModules";
+            this.lblInstalledModules.Size = new System.Drawing.Size(413, 13);
+            this.lblInstalledModules.TabIndex = 2;
+            this.lblInstalledModules.Text = "Installed modules:";
+            // 
+            // pbRefreshLocal
+            // 
+            this.pbRefreshLocal.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pbRefreshLocal.Image = global::LPLauncher.Properties.Resources.arrow_refresh_small;
+            this.pbRefreshLocal.Location = new System.Drawing.Point(419, 0);
+            this.pbRefreshLocal.Margin = new System.Windows.Forms.Padding(0);
+            this.pbRefreshLocal.Name = "pbRefreshLocal";
+            this.pbRefreshLocal.Size = new System.Drawing.Size(50, 14);
+            this.pbRefreshLocal.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pbRefreshLocal.TabIndex = 3;
+            this.pbRefreshLocal.TabStop = false;
+            this.pbRefreshLocal.Click += new System.EventHandler(this.pbRefreshLocal_Click);
+            // 
             // splitContainerHeader
             // 
             this.splitContainerHeader.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -269,6 +332,7 @@
             // 
             // splitContainerHeader.Panel1
             // 
+            this.splitContainerHeader.Panel1.Controls.Add(this.lblLPVersion);
             this.splitContainerHeader.Panel1.Controls.Add(this.pictureBox1);
             this.splitContainerHeader.Panel1MinSize = 120;
             // 
@@ -284,11 +348,24 @@
             this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox1.Image = global::LPLauncher.Properties.Resources.header;
             this.pictureBox1.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(933, 120);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
+            // 
+            // lblLPVersion
+            // 
+            this.lblLPVersion.BackColor = System.Drawing.Color.Transparent;
+            this.lblLPVersion.Dock = System.Windows.Forms.DockStyle.Right;
+            this.lblLPVersion.ForeColor = System.Drawing.Color.Gray;
+            this.lblLPVersion.Location = new System.Drawing.Point(864, 0);
+            this.lblLPVersion.Name = "lblLPVersion";
+            this.lblLPVersion.Size = new System.Drawing.Size(69, 120);
+            this.lblLPVersion.TabIndex = 1;
+            this.lblLPVersion.Text = "Version X.XX";
+            this.lblLPVersion.TextAlign = System.Drawing.ContentAlignment.BottomRight;
             // 
             // Form1
             // 
@@ -310,9 +387,15 @@
             this.tableLayoutPanelLeft.ResumeLayout(false);
             this.tableLayoutPanelLeft.PerformLayout();
             this.tableLayoutPanelBottomLeft.ResumeLayout(false);
+            this.tableLayoutPanel2.ResumeLayout(false);
+            this.tableLayoutPanel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbRefreshRepo)).EndInit();
             this.tableLayoutPanelRight.ResumeLayout(false);
             this.tableLayoutPanelRight.PerformLayout();
             this.tableLayoutPanelBottomRight.ResumeLayout(false);
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbRefreshLocal)).EndInit();
             this.splitContainerHeader.Panel1.ResumeLayout(false);
             this.splitContainerHeader.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerHeader)).EndInit();
@@ -324,8 +407,6 @@
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ListBox lbAvail;
         private System.Windows.Forms.ListBox lbInst;
         private System.Windows.Forms.Label lblModHint;
@@ -340,6 +421,13 @@
         private System.Windows.Forms.Button btnLaunch;
         private System.Windows.Forms.Button btnDelMod;
         private System.Windows.Forms.Button btnUpdateAll;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
+        private System.Windows.Forms.Label lblAvailModules;
+        private System.Windows.Forms.PictureBox pbRefreshRepo;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.Label lblInstalledModules;
+        private System.Windows.Forms.PictureBox pbRefreshLocal;
+        private System.Windows.Forms.Label lblLPVersion;
     }
 }
 
