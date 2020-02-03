@@ -16,6 +16,9 @@ namespace LPLauncher
         private string m_sDescription;
         private string m_sDepends;
         private string m_sDevMsg;
+        private int m_index = -1;
+
+        private bool m_bIsEnabled = true;
 
         private string m_sFileName;
 
@@ -34,6 +37,14 @@ namespace LPLauncher
             m_sVersion = version;
             m_sPath = path;
             m_sModId = id;
+
+            if (!isRepoMod())
+            {
+                if (id == "vin_Base")
+                    m_index = 0;
+                else if (id.StartsWith("vin_"))
+                    m_index = 1;
+            }
         }
 
         public string getName() { return m_sName; }
@@ -59,8 +70,18 @@ namespace LPLauncher
 
         public bool isEnabled()
         {
+            return m_bIsEnabled;
+        }
+
+        public void setEnabled(bool state)
+        {
+            m_bIsEnabled = state;
+        }
+
+        public bool isAddon()
+        {
             if (m_sFileName != null)
-                return !m_sFileName.EndsWith(".disabled");
+                return m_sFileName.Contains(".lpaddon");
             else
                 return true;
         }
@@ -88,22 +109,9 @@ namespace LPLauncher
             if (isRepoMod())
                 return false;
 
-            string newName = "";
+            m_bIsEnabled = !m_bIsEnabled;
 
-            if (!isEnabled())
-            {
-                newName = m_sFileName.Substring(0,m_sFileName.Length - 9);
-            }
-            else
-            {
-                newName = m_sFileName + ".disabled";
-            }
-
-            File.Move(m_sFileName, newName);
-
-            m_sFileName = newName;
-
-            return isEnabled();
+            return m_bIsEnabled;
         }
 
         internal bool delete()
@@ -170,6 +178,16 @@ namespace LPLauncher
 
                         sr.Close();
                     }
+
+                    if (!isRepoMod() && m_index == -1 )
+                    {
+                        if (m_sModId == "vin_Base")
+                            m_index = 0;
+                        else if (m_sModId.StartsWith("vin_"))
+                            m_index = 1;
+                        else
+                            m_index = 2;
+                    }
                 }
                 catch(Exception ex)
                 {
@@ -180,6 +198,16 @@ namespace LPLauncher
             }
 
             return false;
+        }
+
+        internal void setIndex(int p)
+        {
+            m_index = p;
+        }
+
+        internal int getIndex()
+        {
+            return m_index;
         }
     }
 }

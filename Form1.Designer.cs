@@ -48,8 +48,8 @@
             this.lblInstalledModules = new System.Windows.Forms.Label();
             this.pbRefreshLocal = new System.Windows.Forms.PictureBox();
             this.splitContainerHeader = new System.Windows.Forms.SplitContainer();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.lblLPVersion = new System.Windows.Forms.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerContent)).BeginInit();
             this.splitContainerContent.Panel1.SuspendLayout();
             this.splitContainerContent.Panel2.SuspendLayout();
@@ -83,16 +83,20 @@
             // 
             // lbInst
             // 
+            this.lbInst.AllowDrop = true;
             this.lbInst.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.lbInst.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lbInst.ForeColor = System.Drawing.Color.White;
             this.lbInst.Location = new System.Drawing.Point(3, 23);
             this.lbInst.Name = "lbInst";
             this.lbInst.Size = new System.Drawing.Size(469, 386);
-            this.lbInst.Sorted = true;
             this.lbInst.TabIndex = 3;
             this.lbInst.SelectedIndexChanged += new System.EventHandler(this.lbInst_SelectedIndexChanged);
+            this.lbInst.DragDrop += new System.Windows.Forms.DragEventHandler(this.lbInst_DragDrop);
+            this.lbInst.DragOver += new System.Windows.Forms.DragEventHandler(this.lbInst_DragOver);
             this.lbInst.DoubleClick += new System.EventHandler(this.lbInst_DoubleClick);
+            this.lbInst.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lbInst_MouseDown);
+            this.lbInst.MouseMove += new System.Windows.Forms.MouseEventHandler(this.lbInst_MouseMove);
             // 
             // lblModHint
             // 
@@ -343,18 +347,6 @@
             this.splitContainerHeader.SplitterDistance = 120;
             this.splitContainerHeader.TabIndex = 10;
             // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox1.Image = global::LPLauncher.Properties.Resources.header;
-            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
-            this.pictureBox1.Margin = new System.Windows.Forms.Padding(0);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(933, 120);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
-            // 
             // lblLPVersion
             // 
             this.lblLPVersion.BackColor = System.Drawing.Color.Transparent;
@@ -366,6 +358,18 @@
             this.lblLPVersion.TabIndex = 1;
             this.lblLPVersion.Text = "Version X.XX";
             this.lblLPVersion.TextAlign = System.Drawing.ContentAlignment.BottomRight;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBox1.Image = global::LPLauncher.Properties.Resources.header;
+            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(0);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(933, 120);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox1.TabIndex = 0;
+            this.pictureBox1.TabStop = false;
             // 
             // Form1
             // 
@@ -379,6 +383,7 @@
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "LifePlay ModManager";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.splitContainerContent.Panel1.ResumeLayout(false);
             this.splitContainerContent.Panel2.ResumeLayout(false);

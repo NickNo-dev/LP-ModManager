@@ -20,7 +20,7 @@ namespace LPLauncher
     public partial class Form1 : Form
     {
         private List<CMod> m_ModsAvailable = new List<CMod>();
-        private List<CMod> m_ModsInstalled = new List<CMod>();
+        private Dictionary<string, CMod> m_ModsInstalled = new Dictionary<string, CMod>();
 
         private const string MOD_SUBFOLDER = @"LifePlay\Content\Modules\";
         private const string BASE_REPO_URL = "https://raw.githubusercontent.com/NickNo-dev/LP-Mods/master/";
@@ -28,6 +28,8 @@ namespace LPLauncher
         private string m_sPath = "";
         private string m_sLifePlayVersionInstalled = "";
         private string m_sLifePlayVersionAvailable = "";
+
+        private Point m_ptDndStart;
 
         public Form1()
         {
@@ -104,11 +106,17 @@ namespace LPLauncher
 
         private void RenderInstModList()
         {
+            // Sort modules by index
+            List<CMod> addList = m_ModsInstalled.Values.ToList();
+            addList = addList.OrderBy(o => o.getIndex()).ToList();
+
             lbInst.Items.Clear();
-            foreach (CMod mod in m_ModsInstalled)
+            foreach (CMod mod in addList)
             {
-                int idx = lbInst.Items.Add(mod);
+                lbInst.Items.Add(mod);
             }
+
+
         }
 
         private void RenderRepoModList()
@@ -156,6 +164,8 @@ namespace LPLauncher
 
                 foreach (DirectoryInfo folder in directories)
                 {
+                    bool wasDisabled = false;
+
                     // Test if the folder contains a required info file
                     FileInfo modFileInfo = null;
                     if (folder.GetFiles("*.lpmod").Length>0)
@@ -169,6 +179,11 @@ namespace LPLauncher
                     else if (folder.GetFiles("*.disabled").Length > 0)
                     {
                         modFileInfo = folder.GetFiles("*.disabled")[0];
+                        
+                        // reset old disabled state to new one
+                        string newName = modFileInfo.FullName.Replace(".disabled", "");
+                        modFileInfo.MoveTo(newName);
+                        wasDisabled = true;
                     }
 
                     if (modFileInfo != null)
@@ -179,9 +194,13 @@ namespace LPLauncher
                             string modPath = modFileInfo.DirectoryName;
 
                             CMod instMod = new CMod(modFile, modPath);
+                            if (wasDisabled)
+                                instMod.setEnabled(!wasDisabled);
+
                             instMod.setFileName(modFileInfo.FullName);
                             instMod.readModInfo();
-                            m_ModsInstalled.Add(instMod);
+
+                            m_ModsInstalled.Add(instMod.getId(), instMod);
                         }
                         catch (Exception) { }
                     }
@@ -298,7 +317,71 @@ namespace LPLauncher
 
         private void btnLaunch_Click(object sender, EventArgs e)
         {
-            Process.Start(m_sPath + "lifeplay.exe");
+            if( File.Exists( m_sPath + "lifeplay.exe") )
+            {
+                WriteModControlFile();
+                Process.Start(m_sPath + "lifeplay.exe");
+            }
+            else
+            {
+                MessageBox.Show("Ouch! I could not find the 'LifePlay.exe' in the same directory as 'LPLauncher.exe'.\n\nPlease make sure you extracted the LPLauncher into your LifePlay game directory.\n\nCheck the readme.txt file for further information. Thanks...", "LifePlay not found :-(");
+            }
+
+        }
+
+        private void WriteModControlFile()
+        {
+            if (lbInst.Items.Count > 0 && Directory.Exists(m_sPath))
+            {
+                string sPath = m_sPath + @"LifePlay\Content\Modules\ModLauncher.config";
+                using (StreamWriter sw = new StreamWriter(File.OpenWrite(sPath)))
+                {
+                    sw.WriteLine("UseConfigIgnoreAppData:true");
+
+                    foreach (CMod mod in lbInst.Items)
+                    {
+                        // if( !mod.isBaseMod() && !mod.isAddon() )
+                        sw.WriteLine(mod.getId() + ":" + (mod.isEnabled() ? "true" : "false"));
+                    }
+                }
+            }
+        }
+
+        private bool ReadModControlFile()
+        {
+            string sPath = m_sPath + @"LifePlay\Content\Modules\ModLauncher.config";
+
+            if (!File.Exists(sPath))
+                return false;
+            try
+            {
+                using (StreamReader sr = File.OpenText(sPath))
+                {
+                    int idx = 0;
+                    while (!sr.EndOfStream)
+                    {
+                        string line = sr.ReadLine();
+
+                        if (!line.StartsWith("UseConfigIgnoreAppData") && line.IndexOf(':') > 1)
+                        {
+                            string[] kvp = line.Split(':');
+
+                            string sId = kvp[0];
+                            bool enabled = (kvp[1].ToLower() == "true");
+                            CMod mod = findInstalledModWithId(sId);
+                            if (mod != null)
+                            {
+                                mod.setEnabled(enabled);
+                                mod.setIndex(idx++);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            { }
+
+            return true;
         }
 
         private void lbInst_DoubleClick(object sender, EventArgs e)
@@ -307,12 +390,21 @@ namespace LPLauncher
             {
                 CMod selMod = (CMod)lbInst.SelectedItem;
 
-                if (!selMod.isBaseMod())
+                if (!selMod.isBaseMod() && !selMod.isAddon())
                 {
                     selMod.toggleActive();
 
+                    int idx = lbInst.SelectedIndex;
                     lbInst.Items.Remove(selMod);
-                    lbInst.Items.Add(selMod);
+                    lbInst.Items.Insert(idx, selMod);
+                    lbInst.SelectedIndex = idx;
+                }
+                else
+                {
+                    if( selMod.isAddon() )
+                        MessageBox.Show("You cannot disable addons like character packs or room presets.", "Ooopsie...");
+                    else
+                        MessageBox.Show("Disabling the base game files is not the best idea you had today...\nI'll keep them enabled for you.", "Eh what?");
                 }
             }
         }
@@ -337,7 +429,7 @@ namespace LPLauncher
                         if (success)
                         {
                             lbInst.Items.Remove(mod);
-                            m_ModsInstalled.Remove(mod);
+                            m_ModsInstalled.Remove(mod.getId());
                         }
                     }
                 }
@@ -377,13 +469,22 @@ namespace LPLauncher
             {
                 CMod mod = (CMod)lbAvail.SelectedItem;
                 
-                InstallMod(mod, true);
+                CMod newMod = InstallMod(mod, true);
 
-                RefreshLocalMods();
+                if(newMod != null)
+                {
+                    // Test if the mod was already installed (only updated)
+                    CMod instMod = findInstalledModWithId(newMod.getId());
+                    if (instMod == null)
+                    {
+                        m_ModsInstalled.Add(newMod.getId(), newMod);
+                        lbInst.Items.Add(newMod);
+                    }
+                }
             }
         }
 
-        private void InstallMod(CMod mod, bool askToReplace = false)
+        private CMod InstallMod(CMod mod, bool askToReplace = false)
         {
             using (WebClient wc = new WebClient())
             {
@@ -428,8 +529,29 @@ namespace LPLauncher
                             {
                                 MessageBox.Show(mod.getDevMessage(), "Message from mod " + mod.getName());
                             }
-                        }
 
+                            // Test if the mod file exists
+                            DirectoryInfo folder = new DirectoryInfo(dest);
+                            FileInfo modFileInfo = null;
+                            if (folder.GetFiles("*.lpmod").Length > 0)
+                            {
+                                modFileInfo = folder.GetFiles("*.lpmod")[0];
+                            }
+                            else if (folder.GetFiles("*.lpaddon").Length > 0)
+                            {
+                                modFileInfo = folder.GetFiles("*.lpaddon")[0];
+                            }
+
+                            if( modFileInfo != null )
+                            {
+                                CMod newMod = new CMod(mod.getName(), dest);
+                                newMod.setFileName(modFileInfo.FullName);
+                                newMod.readModInfo();
+                                newMod.setIndex(lbInst.Items.Count);
+
+                                return newMod;
+                            }
+                        }
                     }
 
                     if (Directory.Exists("mmTemp"))
@@ -441,6 +563,8 @@ namespace LPLauncher
                 {
                     MessageBox.Show("Problem during installation of mod " + mod.ToString() + ":\n" + ex.Message, "Ooops...");
                 }
+
+                return null;
             }
         }
 
@@ -498,11 +622,9 @@ namespace LPLauncher
 
         private CMod findInstalledModWithId(string id)
         {
-            // TODO: If LP sometime has 1000+ mods we could switch this to a dictonary with key = id
-            foreach (CMod modInst in m_ModsInstalled)
+            if(m_ModsInstalled.ContainsKey(id))
             {
-                if (modInst.getId() == id)
-                    return modInst;
+                return m_ModsInstalled[id];
             }
             return null;
         }
@@ -552,6 +674,7 @@ namespace LPLauncher
         private void RefreshLocalMods()
         {
             GetInstalledMods();
+            ReadModControlFile();
             RenderInstModList();
         }
 
@@ -565,5 +688,45 @@ namespace LPLauncher
             UpdateRepo();
             RenderRepoModList();
         }
+
+        private void lbInst_DragOver(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.Move;
+        }
+
+        private void lbInst_DragDrop(object sender, DragEventArgs e)
+        {
+            Point point = lbInst.PointToClient(new Point(e.X, e.Y));
+            int index = lbInst.IndexFromPoint(point);
+
+            if (index < 0) 
+                index = lbInst.Items.Count - 1;
+            
+            CMod data = (CMod)e.Data.GetData(typeof(CMod));
+            lbInst.Items.Remove(data);
+            lbInst.Items.Insert(index, data);
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            WriteModControlFile();
+            Application.Exit();
+        }
+
+        private void lbInst_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (lbInst.SelectedItem == null || e.Button == System.Windows.Forms.MouseButtons.None)
+                return;
+
+            if( e.X != m_ptDndStart.X || e.Y != m_ptDndStart.Y )
+                lbInst.DoDragDrop(lbInst.SelectedItem, DragDropEffects.Move);
+        }
+
+        private void lbInst_MouseDown(object sender, MouseEventArgs e)
+        {
+            m_ptDndStart = e.Location;
+        }
+
+        
     }
 }
