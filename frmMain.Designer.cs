@@ -1,6 +1,6 @@
 ﻿namespace LPLauncher
 {
-    partial class Form1
+    partial class frmMain
     {
         /// <summary>
         /// Erforderliche Designervariable.
@@ -28,7 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             this.lbAvail = new System.Windows.Forms.ListBox();
             this.lbInst = new System.Windows.Forms.ListBox();
             this.lblModHint = new System.Windows.Forms.Label();
@@ -36,6 +37,7 @@
             this.splitContainerContent = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanelLeft = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanelBottomLeft = new System.Windows.Forms.TableLayoutPanel();
+            this.btnAdvanced = new System.Windows.Forms.Button();
             this.btnUpdateAll = new System.Windows.Forms.Button();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.lblAvailModules = new System.Windows.Forms.Label();
@@ -50,6 +52,11 @@
             this.splitContainerHeader = new System.Windows.Forms.SplitContainer();
             this.lblLPVersion = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.cmAdvanced = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.editLifePlayNameListsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editLifePlaysportsOutfitsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editLifePlayworkOutfitsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editLifePlaycasualOutfitsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerContent)).BeginInit();
             this.splitContainerContent.Panel1.SuspendLayout();
             this.splitContainerContent.Panel2.SuspendLayout();
@@ -67,6 +74,7 @@
             this.splitContainerHeader.Panel2.SuspendLayout();
             this.splitContainerHeader.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.cmAdvanced.SuspendLayout();
             this.SuspendLayout();
             // 
             // lbAvail
@@ -163,6 +171,7 @@
             this.tableLayoutPanelBottomLeft.ColumnCount = 2;
             this.tableLayoutPanelBottomLeft.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanelBottomLeft.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanelBottomLeft.Controls.Add(this.btnAdvanced, 0, 0);
             this.tableLayoutPanelBottomLeft.Controls.Add(this.btnUpdateAll, 0, 0);
             this.tableLayoutPanelBottomLeft.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanelBottomLeft.Location = new System.Drawing.Point(3, 435);
@@ -171,6 +180,19 @@
             this.tableLayoutPanelBottomLeft.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanelBottomLeft.Size = new System.Drawing.Size(448, 34);
             this.tableLayoutPanelBottomLeft.TabIndex = 8;
+            // 
+            // btnAdvanced
+            // 
+            this.btnAdvanced.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.btnAdvanced.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnAdvanced.ForeColor = System.Drawing.Color.White;
+            this.btnAdvanced.Location = new System.Drawing.Point(227, 3);
+            this.btnAdvanced.Name = "btnAdvanced";
+            this.btnAdvanced.Size = new System.Drawing.Size(218, 28);
+            this.btnAdvanced.TabIndex = 11;
+            this.btnAdvanced.Text = "List editor";
+            this.btnAdvanced.UseVisualStyleBackColor = false;
+            this.btnAdvanced.Click += new System.EventHandler(this.btnAdvanced_Click);
             // 
             // btnUpdateAll
             // 
@@ -261,7 +283,7 @@
             // 
             // btnLaunch
             // 
-            this.btnLaunch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(100)))), ((int)(((byte)(64)))));
+            this.btnLaunch.BackColor = System.Drawing.Color.Green;
             this.btnLaunch.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnLaunch.ForeColor = System.Drawing.Color.White;
             this.btnLaunch.Location = new System.Drawing.Point(237, 3);
@@ -371,7 +393,46 @@
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
-            // Form1
+            // cmAdvanced
+            // 
+            this.cmAdvanced.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.editLifePlayNameListsToolStripMenuItem,
+            this.editLifePlaysportsOutfitsToolStripMenuItem,
+            this.editLifePlayworkOutfitsToolStripMenuItem,
+            this.editLifePlaycasualOutfitsToolStripMenuItem});
+            this.cmAdvanced.Name = "cmAdvanced";
+            this.cmAdvanced.Size = new System.Drawing.Size(212, 114);
+            this.cmAdvanced.Opening += new System.ComponentModel.CancelEventHandler(this.cmAdvanced_Opening);
+            // 
+            // editLifePlayNameListsToolStripMenuItem
+            // 
+            this.editLifePlayNameListsToolStripMenuItem.Name = "editLifePlayNameListsToolStripMenuItem";
+            this.editLifePlayNameListsToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+            this.editLifePlayNameListsToolStripMenuItem.Text = "Edit LifePlay &name lists";
+            this.editLifePlayNameListsToolStripMenuItem.Click += new System.EventHandler(this.editLifePlayNameListsToolStripMenuItem_Click);
+            // 
+            // editLifePlaysportsOutfitsToolStripMenuItem
+            // 
+            this.editLifePlaysportsOutfitsToolStripMenuItem.Name = "editLifePlaysportsOutfitsToolStripMenuItem";
+            this.editLifePlaysportsOutfitsToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+            this.editLifePlaysportsOutfitsToolStripMenuItem.Text = "Edit LifePlay &sports outfits";
+            this.editLifePlaysportsOutfitsToolStripMenuItem.Click += new System.EventHandler(this.editLifePlaysportsOutfitsToolStripMenuItem_Click);
+            // 
+            // editLifePlayworkOutfitsToolStripMenuItem
+            // 
+            this.editLifePlayworkOutfitsToolStripMenuItem.Name = "editLifePlayworkOutfitsToolStripMenuItem";
+            this.editLifePlayworkOutfitsToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+            this.editLifePlayworkOutfitsToolStripMenuItem.Text = "Edit LifePlay &work outfits";
+            this.editLifePlayworkOutfitsToolStripMenuItem.Click += new System.EventHandler(this.editLifePlayworkOutfitsToolStripMenuItem_Click);
+            // 
+            // editLifePlaycasualOutfitsToolStripMenuItem
+            // 
+            this.editLifePlaycasualOutfitsToolStripMenuItem.Name = "editLifePlaycasualOutfitsToolStripMenuItem";
+            this.editLifePlaycasualOutfitsToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+            this.editLifePlaycasualOutfitsToolStripMenuItem.Text = "Edit LifePlay &casual outfits";
+            this.editLifePlaycasualOutfitsToolStripMenuItem.Click += new System.EventHandler(this.editLifePlaycasualOutfitsToolStripMenuItem_Click);
+            // 
+            // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -380,7 +441,7 @@
             this.Controls.Add(this.splitContainerHeader);
             this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "Form1";
+            this.Name = "frmMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "LifePlay ModManager";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
@@ -406,6 +467,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerHeader)).EndInit();
             this.splitContainerHeader.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.cmAdvanced.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -433,6 +495,12 @@
         private System.Windows.Forms.Label lblInstalledModules;
         private System.Windows.Forms.PictureBox pbRefreshLocal;
         private System.Windows.Forms.Label lblLPVersion;
+        private System.Windows.Forms.Button btnAdvanced;
+        private System.Windows.Forms.ContextMenuStrip cmAdvanced;
+        private System.Windows.Forms.ToolStripMenuItem editLifePlayNameListsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem editLifePlaysportsOutfitsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem editLifePlayworkOutfitsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem editLifePlaycasualOutfitsToolStripMenuItem;
     }
 }
 

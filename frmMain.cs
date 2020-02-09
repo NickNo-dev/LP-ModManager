@@ -17,7 +17,7 @@ using System.Globalization;
 
 namespace LPLauncher
 {
-    public partial class Form1 : Form
+    public partial class frmMain : Form
     {
         private List<CMod> m_ModsAvailable = new List<CMod>();
         private Dictionary<string, CMod> m_ModsInstalled = new Dictionary<string, CMod>();
@@ -31,7 +31,7 @@ namespace LPLauncher
 
         private Point m_ptDndStart;
 
-        public Form1()
+        public frmMain()
         {
             InitializeComponent();
 
@@ -320,6 +320,35 @@ namespace LPLauncher
             if( File.Exists( m_sPath + "lifeplay.exe") )
             {
                 WriteModControlFile();
+
+                if(CNameLists.hasCustomNameList(m_sPath))
+                {
+                    CNameLists nameLists = new CNameLists(m_sPath);
+                    if( nameLists.loadNameLists() )
+                        nameLists.writeLifePlayNameLists(m_sPath);
+                }
+
+                if (CClothLists.hasCustomClothLists(m_sPath, CClothLists.ClothType.ctCasual))
+                {
+                    CClothLists clothList = new CClothLists(m_sPath, CClothLists.ClothType.ctCasual);
+                    if (clothList.loadClothList())
+                        clothList.writeLifePlayClothList(m_sPath);
+                }
+
+                if (CClothLists.hasCustomClothLists(m_sPath, CClothLists.ClothType.ctWork))
+                {
+                    CClothLists clothList = new CClothLists(m_sPath, CClothLists.ClothType.ctWork);
+                    if (clothList.loadClothList())
+                        clothList.writeLifePlayClothList(m_sPath);
+                }
+
+                if (CClothLists.hasCustomClothLists(m_sPath, CClothLists.ClothType.ctSport))
+                {
+                    CClothLists clothList = new CClothLists(m_sPath, CClothLists.ClothType.ctSport);
+                    if (clothList.loadClothList())
+                        clothList.writeLifePlayClothList(m_sPath);
+                }
+
                 Process.Start(m_sPath + "lifeplay.exe");
             }
             else
@@ -727,6 +756,40 @@ namespace LPLauncher
             m_ptDndStart = e.Location;
         }
 
-        
+        private void cmAdvanced_Opening(object sender, CancelEventArgs e)
+        {
+
+        }
+
+        private void editLifePlayNameListsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmEditList editorWnd = new frmEditList(frmEditList.EditorType.editNames, m_sPath);
+            DialogResult dr = editorWnd.ShowDialog(this);
+        }
+
+        private void btnAdvanced_Click(object sender, EventArgs e)
+        {
+
+            Point ptLowerLeft = new Point(0, btnAdvanced.Height);
+            cmAdvanced.Show(btnAdvanced, ptLowerLeft);
+        }
+
+        private void editLifePlaycasualOutfitsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmEditList editorWnd = new frmEditList(frmEditList.EditorType.editClothesCasual, m_sPath);
+            DialogResult dr = editorWnd.ShowDialog(this);
+        }
+
+        private void editLifePlayworkOutfitsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmEditList editorWnd = new frmEditList(frmEditList.EditorType.editClothesWork, m_sPath);
+            DialogResult dr = editorWnd.ShowDialog(this);
+        }
+
+        private void editLifePlaysportsOutfitsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmEditList editorWnd = new frmEditList(frmEditList.EditorType.editClothesSport, m_sPath);
+            DialogResult dr = editorWnd.ShowDialog(this);
+        }
     }
 }

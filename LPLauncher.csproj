@@ -47,7 +47,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>2.ico</ApplicationIcon>
+    <ApplicationIcon>Application.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -64,16 +64,27 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CMod.cs" />
-    <Compile Include="Form1.cs">
+    <Compile Include="CClothLists.cs" />
+    <Compile Include="CNameLists.cs" />
+    <Compile Include="frmMain.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="frmMain.Designer.cs">
+      <DependentUpon>frmMain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmEditList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmEditList.Designer.cs">
+      <DependentUpon>frmEditList.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <EmbeddedResource Include="frmMain.resx">
+      <DependentUpon>frmMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmEditList.resx">
+      <DependentUpon>frmEditList.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -122,6 +133,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="2.ico" />
+    <Content Include="Application.ico" />
     <None Include="Resources\arrow_refresh_small.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
