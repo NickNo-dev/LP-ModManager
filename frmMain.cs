@@ -70,6 +70,8 @@ namespace LPLauncher
             
             RefreshLocalMods();
             RefreshRepoMods();
+
+            this.Text = "LifePlay ModManager " + Application.ProductVersion.ToString();
         }
 
         private void GetLifePlayVersion()
