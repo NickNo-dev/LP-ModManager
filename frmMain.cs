@@ -367,7 +367,11 @@ namespace LPLauncher
                 {
                     sw.WriteLine("UseConfigIgnoreAppData:true");
 
-                    foreach (CMod mod in lbInst.Items)
+                    // The mod control file needs to be in reverse order ... :(
+                    List<CMod> revList = lbInst.Items.Cast<CMod>().ToList();
+                    revList.Reverse();
+
+                    foreach (CMod mod in revList)
                     {
                         // if( !mod.isBaseMod() && !mod.isAddon() )
                         sw.WriteLine(mod.getId() + ":" + (mod.isEnabled() ? "true" : "false"));
@@ -387,22 +391,32 @@ namespace LPLauncher
                 using (StreamReader sr = File.OpenText(sPath))
                 {
                     int idx = 0;
+                    List<String> itemList = new List<string>();
                     while (!sr.EndOfStream)
                     {
                         string line = sr.ReadLine();
 
                         if (!line.StartsWith("UseConfigIgnoreAppData") && line.IndexOf(':') > 1)
                         {
-                            string[] kvp = line.Split(':');
+                            itemList.Add(line);
+                        }
+                    }
 
-                            string sId = kvp[0];
-                            bool enabled = (kvp[1].ToLower() == "true");
-                            CMod mod = findInstalledModWithId(sId);
-                            if (mod != null)
-                            {
-                                mod.setEnabled(enabled);
-                                mod.setIndex(idx++);
-                            }
+                    // Test if we need to reverse the mod control file
+                    if( !itemList[0].StartsWith("vin_Base"))
+                        itemList.Reverse(); // The mod control file is in reversed order
+
+                    foreach( string line in itemList )
+                    {
+                        string[] kvp = line.Split(':');
+
+                        string sId = kvp[0];
+                        bool enabled = (kvp[1].ToLower() == "true");
+                        CMod mod = findInstalledModWithId(sId);
+                        if (mod != null)
+                        {
+                            mod.setEnabled(enabled);
+                            mod.setIndex(idx++);
                         }
                     }
                 }
