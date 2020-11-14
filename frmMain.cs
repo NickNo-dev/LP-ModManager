@@ -304,12 +304,20 @@ namespace LPLauncher
                 float fInst = float.Parse(m_sLifePlayVersionInstalled, CultureInfo.InvariantCulture);
                 float fAvail = float.Parse(m_sLifePlayVersionAvailable, CultureInfo.InvariantCulture);
 
-                if (fInst < fAvail)
+                int majorInst = (int)fInst;
+                int majorAvail = (int)fAvail;
+                int minorInst = int.Parse((fInst - majorInst).ToString().Substring(2));
+                int minorAvail = int.Parse((fAvail - majorAvail).ToString().Substring(2));
+
+                if (majorInst <= majorAvail)
                 {
-                    DialogResult dr = MessageBox.Show("Looks like you are running an old version of LifePlay.\nShall I open the download site for you?", "LifePlay is out dated", MessageBoxButtons.YesNo);
-                    if (dr == System.Windows.Forms.DialogResult.Yes)
+                    if (minorInst < minorAvail)
                     {
-                        Process.Start("https://f95zone.to/threads/lifeplay-v2-17-vinfamy.11321/");
+                        DialogResult dr = MessageBox.Show("Looks like you are running an old version of LifePlay.\nShall I open the download site for you?", "LifePlay is out dated", MessageBoxButtons.YesNo);
+                        if (dr == System.Windows.Forms.DialogResult.Yes)
+                        {
+                            Process.Start("https://f95zone.to/threads/lifeplay-v2-17-vinfamy.11321/");
+                        }
                     }
                 }
             }

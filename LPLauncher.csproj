@@ -132,7 +132,6 @@
     <None Include="header.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="2.ico" />
     <Content Include="Application.ico" />
     <None Include="Resources\arrow_refresh_small.png" />
   </ItemGroup>
