@@ -1,3 +1,10 @@
 /obj
 /bin/Debug
 /bin
+.vs/LPLauncher/v15/.suo
+.vs/LPLauncher/v15/Server/sqlite3/db.lock
+.vs/LPLauncher/v15/Server/sqlite3/storage.ide
+.vs/LPLauncher/v15/Server/sqlite3/storage.ide-shm
+.vs/LPLauncher/v15/Server/sqlite3/storage.ide-wal
+LPLauncher.sln
+LPLauncher.v12.suo
