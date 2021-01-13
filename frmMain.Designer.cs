@@ -84,7 +84,7 @@
             this.lbAvail.ForeColor = System.Drawing.Color.White;
             this.lbAvail.Location = new System.Drawing.Point(3, 23);
             this.lbAvail.Name = "lbAvail";
-            this.lbAvail.Size = new System.Drawing.Size(448, 386);
+            this.lbAvail.Size = new System.Drawing.Size(448, 376);
             this.lbAvail.TabIndex = 2;
             this.lbAvail.SelectedIndexChanged += new System.EventHandler(this.lbAvail_SelectedIndexChanged);
             this.lbAvail.DoubleClick += new System.EventHandler(this.lbAvail_DoubleClick);
@@ -97,7 +97,7 @@
             this.lbInst.ForeColor = System.Drawing.Color.White;
             this.lbInst.Location = new System.Drawing.Point(3, 23);
             this.lbInst.Name = "lbInst";
-            this.lbInst.Size = new System.Drawing.Size(469, 386);
+            this.lbInst.Size = new System.Drawing.Size(469, 376);
             this.lbInst.TabIndex = 3;
             this.lbInst.SelectedIndexChanged += new System.EventHandler(this.lbInst_SelectedIndexChanged);
             this.lbInst.DragDrop += new System.Windows.Forms.DragEventHandler(this.lbInst_DragDrop);
@@ -108,27 +108,27 @@
             // 
             // lblModHint
             // 
-            this.lblModHint.AutoSize = true;
             this.lblModHint.BackColor = System.Drawing.Color.Black;
             this.lblModHint.Dock = System.Windows.Forms.DockStyle.Top;
             this.lblModHint.ForeColor = System.Drawing.Color.White;
-            this.lblModHint.Location = new System.Drawing.Point(3, 412);
+            this.lblModHint.Location = new System.Drawing.Point(3, 402);
             this.lblModHint.Name = "lblModHint";
-            this.lblModHint.Size = new System.Drawing.Size(469, 13);
+            this.lblModHint.Size = new System.Drawing.Size(469, 30);
             this.lblModHint.TabIndex = 6;
             this.lblModHint.Text = "Double click a module to enable / disable it.";
+            this.lblModHint.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // lblModInfo
             // 
-            this.lblModInfo.AutoSize = true;
             this.lblModInfo.BackColor = System.Drawing.Color.Black;
             this.lblModInfo.Dock = System.Windows.Forms.DockStyle.Top;
             this.lblModInfo.ForeColor = System.Drawing.Color.White;
-            this.lblModInfo.Location = new System.Drawing.Point(3, 412);
+            this.lblModInfo.Location = new System.Drawing.Point(3, 402);
             this.lblModInfo.Name = "lblModInfo";
-            this.lblModInfo.Size = new System.Drawing.Size(448, 13);
+            this.lblModInfo.Size = new System.Drawing.Size(448, 26);
             this.lblModInfo.TabIndex = 7;
             this.lblModInfo.Text = "Double click a module to install / update it.";
+            this.lblModInfo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // splitContainerContent
             // 
@@ -161,7 +161,7 @@
             this.tableLayoutPanelLeft.RowCount = 4;
             this.tableLayoutPanelLeft.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanelLeft.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanelLeft.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanelLeft.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             this.tableLayoutPanelLeft.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tableLayoutPanelLeft.Size = new System.Drawing.Size(454, 472);
             this.tableLayoutPanelLeft.TabIndex = 0;
@@ -261,7 +261,7 @@
             this.tableLayoutPanelRight.RowCount = 4;
             this.tableLayoutPanelRight.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanelRight.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanelRight.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanelRight.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             this.tableLayoutPanelRight.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tableLayoutPanelRight.Size = new System.Drawing.Size(475, 472);
             this.tableLayoutPanelRight.TabIndex = 1;
@@ -401,7 +401,7 @@
             this.editLifePlayworkOutfitsToolStripMenuItem,
             this.editLifePlaycasualOutfitsToolStripMenuItem});
             this.cmAdvanced.Name = "cmAdvanced";
-            this.cmAdvanced.Size = new System.Drawing.Size(212, 114);
+            this.cmAdvanced.Size = new System.Drawing.Size(212, 92);
             this.cmAdvanced.Opening += new System.ComponentModel.CancelEventHandler(this.cmAdvanced_Opening);
             // 
             // editLifePlayNameListsToolStripMenuItem
@@ -451,13 +451,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerContent)).EndInit();
             this.splitContainerContent.ResumeLayout(false);
             this.tableLayoutPanelLeft.ResumeLayout(false);
-            this.tableLayoutPanelLeft.PerformLayout();
             this.tableLayoutPanelBottomLeft.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbRefreshRepo)).EndInit();
             this.tableLayoutPanelRight.ResumeLayout(false);
-            this.tableLayoutPanelRight.PerformLayout();
             this.tableLayoutPanelBottomRight.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();

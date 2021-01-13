@@ -554,9 +554,9 @@ namespace LPLauncher
                     Directory.CreateDirectory("mmTemp");
 
                     System.IO.Compression.ZipFile.ExtractToDirectory("lpmgr.tmp", "mmTemp");
-
+                    
                     string[] subFolders = Directory.GetDirectories("mmTemp");
-                    if (subFolders.Length == 1)    // I do not want to spread junk, mods need to keep to 1 subfolder
+                    if (subFolders.Length == 1)    // Single mod
                     {
                         string name = Path.GetFileName(subFolders[0]);
 
@@ -605,7 +605,33 @@ namespace LPLauncher
                                 newMod.readModInfo();
                                 newMod.setIndex(lbInst.Items.Count);
 
+                                if (Directory.Exists("mmTemp"))
+                                    Directory.Delete("mmTemp", true);
+                                File.Delete("lpmgr.tmp");
+
                                 return newMod;
+                            }
+                        }
+                    }
+                    else if(subFolders.Length > 1)
+                    {
+                        if (mod.getDevMessage() != null)
+                        {
+                            MessageBox.Show(mod.getDevMessage(), "Message from mod " + mod.getName());
+                        }
+
+                        DialogResult dr = System.Windows.Forms.DialogResult.Yes;
+                        dr = MessageBox.Show("The package contains multiple folders.\nIt may replace / modify several existing mods (which is OK for a patch).\nProceed with installation?\n\n(If unsure check the mod description again...)", "Install patch mod?", MessageBoxButtons.YesNo);
+                        
+                        if (dr == System.Windows.Forms.DialogResult.Yes)
+                        {
+                            CMod retMod = null;
+                            foreach (string sf in subFolders)
+                            {
+                                string name = Path.GetFileName(sf);
+                                string dest = m_sPath + MOD_SUBFOLDER + name;
+
+                                DirectoryCopy(sf, dest, true);
                             }
                         }
                     }
@@ -819,6 +845,42 @@ namespace LPLauncher
         {
             frmEditList editorWnd = new frmEditList(frmEditList.EditorType.editClothesSport, m_sPath);
             DialogResult dr = editorWnd.ShowDialog(this);
+        }
+
+        private static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
+        {
+            // Get the subdirectories for the specified directory.
+            DirectoryInfo dir = new DirectoryInfo(sourceDirName);
+
+            if (!dir.Exists)
+            {
+                throw new DirectoryNotFoundException(
+                    "Source directory does not exist or could not be found: "
+                    + sourceDirName);
+            }
+
+            DirectoryInfo[] dirs = dir.GetDirectories();
+
+            // If the destination directory doesn't exist, create it.       
+            Directory.CreateDirectory(destDirName);
+
+            // Get the files in the directory and copy them to the new location.
+            FileInfo[] files = dir.GetFiles();
+            foreach (FileInfo file in files)
+            {
+                string tempPath = Path.Combine(destDirName, file.Name);
+                file.CopyTo(tempPath, false);
+            }
+
+            // If copying subdirectories, copy them and their contents to new location.
+            if (copySubDirs)
+            {
+                foreach (DirectoryInfo subdir in dirs)
+                {
+                    string tempPath = Path.Combine(destDirName, subdir.Name);
+                    DirectoryCopy(subdir.FullName, tempPath, copySubDirs);
+                }
+            }
         }
     }
 }
