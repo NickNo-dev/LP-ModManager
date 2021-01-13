@@ -259,7 +259,10 @@ namespace LPLauncher
                         string name = modXml.Attributes["Name"].InnerText;
                         string ver = modXml.Attributes["Version"].InnerText;
                         string id = modXml.Attributes["Id"].InnerText;
-                        string path = BASE_REPO_URL + modXml.Attributes["Path"].InnerText;
+                        string path = modXml.Attributes["Path"].InnerText;
+
+                        if( !(path.StartsWith("http://") || path.StartsWith("https://")) )
+                            path = BASE_REPO_URL + path;
 
                         CMod curMod = new CMod(id, name, ver, path);
 
@@ -611,6 +614,9 @@ namespace LPLauncher
                         Directory.Delete("mmTemp", true);
 
                     File.Delete("lpmgr.tmp");
+
+                    RefreshLocalMods();
+                    RefreshRepoMods();
                 }
                 catch (Exception ex)
                 {
@@ -690,7 +696,6 @@ namespace LPLauncher
 
                 if (selMod.getDescription() == null)
                 {
-                    
                     if( selMod.getDependencies() != null )
                         lblModInfo.Text = "Requires: " + selMod.getDependencies();
                     else
