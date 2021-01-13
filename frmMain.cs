@@ -28,6 +28,7 @@ namespace LPLauncher
         private string m_sPath = "";
         private string m_sLifePlayVersionInstalled = "";
         private string m_sLifePlayVersionAvailable = "";
+        private string m_sLauncherVersionAvailable = "";
 
         private Point m_ptDndStart;
 
@@ -226,7 +227,8 @@ namespace LPLauncher
             {
                 using (WebClient c = new WebClient())
                 {
-                    c.DownloadFile(BASE_REPO_URL + "repo.xml", "lprepo.xml");
+                    string sUrl = BASE_REPO_URL + "repo.xml" + "?timestamp=" + DateTime.Now.ToBinary().ToString();
+                    c.DownloadFile(sUrl, "lprepo.xml");
                 }
             }
             catch (Exception ex)
@@ -247,11 +249,18 @@ namespace LPLauncher
                         if (modXml.LocalName == "#comment")
                         {
                             string val = modXml.Value;
-                            const string searchVer = "#Current LifePlay Version:";
+                            string searchVer = "#Current LifePlay Version:";
                             if (val.Contains(searchVer))
                             {
                                 val = val.Trim();
                                 m_sLifePlayVersionAvailable = val.Substring(searchVer.Length + 1);
+                            }
+
+                            searchVer = "#Current Launcher Version:";
+                            if (val.Contains(searchVer))
+                            {
+                                val = val.Trim();
+                                m_sLauncherVersionAvailable = val.Substring(searchVer.Length + 1);
                             }
                             continue;
                         }
@@ -326,6 +335,14 @@ namespace LPLauncher
             }
             catch (Exception) { }
 
+            if(m_sLauncherVersionAvailable.Length>0 && m_sLauncherVersionAvailable != Application.ProductVersion.ToString())
+            {
+                DialogResult dr = MessageBox.Show("There is a new version of the launcher available.\nShall I open the download site for you?", "Launcher is out dated", MessageBoxButtons.YesNo);
+                if (dr == System.Windows.Forms.DialogResult.Yes)
+                {
+                    Process.Start("https://github.com/NickNo-dev/LP-ModManager/releases/latest");
+                }
+            }
         }
 
         private void btnLaunch_Click(object sender, EventArgs e)
