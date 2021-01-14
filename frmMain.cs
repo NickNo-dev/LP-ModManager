@@ -225,6 +225,9 @@ namespace LPLauncher
 
             try
             {
+                ServicePointManager.Expect100Continue = true;
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
                 using (WebClient c = new WebClient())
                 {
                     string sUrl = BASE_REPO_URL + "repo.xml";
