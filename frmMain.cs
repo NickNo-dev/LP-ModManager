@@ -227,13 +227,13 @@ namespace LPLauncher
             {
                 using (WebClient c = new WebClient())
                 {
-                    string sUrl = BASE_REPO_URL + "repo.xml" + "?timestamp=" + DateTime.Now.ToBinary().ToString();
+                    string sUrl = BASE_REPO_URL + "repo.xml";
                     c.DownloadFile(sUrl, "lprepo.xml");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(this, "Cannot download mod repository. Check your connection and/or if a newer version of the mod manager is avalilable.", "Ooops!");
+                MessageBox.Show(this, "Cannot download mod repository.\nCheck your connection and/or if a newer version of the mod manager is avalilable.\n\nError message is:\n"+ex.Message, "Ooops!");
                 canContinue = false;
             }
 
