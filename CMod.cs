@@ -16,6 +16,7 @@ namespace LPLauncher
         private string m_sDescription;
         private string m_sDepends;
         private string m_sDevMsg;
+        private bool m_bIsPatch = false;
         private int m_index = -1;
 
         private bool m_bIsEnabled = true;
@@ -67,6 +68,9 @@ namespace LPLauncher
         public string getDependencies() { return m_sDepends; }
 
         public void setUpdated(bool state) { m_bIsUpdated = state; }
+
+        public void setIsPatch(bool p) { m_bIsPatch = p; }
+        public bool isPatch() { return m_bIsPatch; }
 
         public bool isEnabled()
         {
@@ -186,7 +190,7 @@ namespace LPLauncher
                         else if (m_sModId.StartsWith("vin_"))
                             m_index = 1;
                         else
-                            m_index = 2;
+                            m_index = 9999999;
                     }
                 }
                 catch(Exception ex)

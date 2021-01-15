@@ -19,7 +19,7 @@ namespace LPLauncher
 {
     public partial class frmMain : Form
     {
-        private List<CMod> m_ModsAvailable = new List<CMod>();
+        private Dictionary<string, CMod> m_ModsAvailable = new Dictionary<string, CMod>();
         private Dictionary<string, CMod> m_ModsInstalled = new Dictionary<string, CMod>();
 
         private const string MOD_SUBFOLDER = @"LifePlay\Content\Modules\";
@@ -130,7 +130,7 @@ namespace LPLauncher
             List<CMod> updatedMods = new List<CMod>();
             List<CMod> normalMods = new List<CMod>();
 
-            foreach (CMod mod in m_ModsAvailable)
+            foreach (CMod mod in m_ModsAvailable.Values)
             {
                 // Check if this module is installed locally
                 CMod instMod = findInstalledModWithId(mod.getId());
@@ -231,6 +231,8 @@ namespace LPLauncher
                 using (WebClient c = new WebClient())
                 {
                     string sUrl = BASE_REPO_URL + "repo.xml";
+                    c.CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.BypassCache);
+                    c.Headers.Add("Cache-Control", "no-cache");
                     c.DownloadFile(sUrl, "lprepo.xml");
                 }
             }
@@ -272,8 +274,9 @@ namespace LPLauncher
                         string ver = modXml.Attributes["Version"].InnerText;
                         string id = modXml.Attributes["Id"].InnerText;
                         string path = modXml.Attributes["Path"].InnerText;
+                        bool isPatch = modXml.Attributes["isPatch"] != null ? modXml.Attributes["isPatch"].InnerText == "1" : false;
 
-                        if( !(path.StartsWith("http://") || path.StartsWith("https://")) )
+                        if ( !(path.StartsWith("http://") || path.StartsWith("https://")) )
                             path = BASE_REPO_URL + path;
 
                         CMod curMod = new CMod(id, name, ver, path);
@@ -295,8 +298,18 @@ namespace LPLauncher
                         if (modXml.Attributes.GetNamedItem("Depends") != null)
                             deps = modXml.Attributes["Depends"].InnerText;
                         curMod.setDependencies(deps);
-                        
-                        m_ModsAvailable.Add(curMod);
+
+                        // Patch flag
+                        curMod.setIsPatch(isPatch);
+
+                        try
+                        {
+                            m_ModsAvailable.Add(id, curMod);
+                        }
+                        catch(Exception ex)
+                        {
+                            MessageBox.Show("Whoops... Something is wrong with my repository!\nError code: " + ex.Message);
+                        }
                         
                     }
 
@@ -304,7 +317,7 @@ namespace LPLauncher
                 }
                 catch(Exception ex)
                 {
-                    MessageBox.Show(this, "The repo could not be downloaded. Please check if a newer version of the mod manager is avalilable.", "Ooops!");
+                    MessageBox.Show(this, "The repo could not be downloaded.\nError code:\n" + ex.Message + "\nPlease check if a newer version of the mod manager is avalilable.", "Ooops!");
                     canContinue = false;
 
                     lblAvailModules.Text = "Unable to fetch the repository. :-(";
@@ -382,7 +395,9 @@ namespace LPLauncher
                         clothList.writeLifePlayClothList(m_sPath);
                 }
 
+#if !DEBUG
                 Process.Start(m_sPath + "lifeplay.exe");
+#endif
             }
             else
             {
@@ -396,20 +411,32 @@ namespace LPLauncher
             if (lbInst.Items.Count > 0 && Directory.Exists(m_sPath))
             {
                 string sPath = m_sPath + @"LifePlay\Content\Modules\ModLauncher.config";
-                using (StreamWriter sw = new StreamWriter(File.OpenWrite(sPath)))
+                try
                 {
-                    sw.WriteLine("UseConfigIgnoreAppData:true");
+                    // Delete exiting file
+                    if (File.Exists(sPath))
+                        File.Delete(sPath);
 
-                    // The mod control file needs to be in reverse order ... :(
-                    List<CMod> revList = lbInst.Items.Cast<CMod>().ToList();
-                    revList.Reverse();
-
-                    foreach (CMod mod in revList)
+                    using (StreamWriter sw = new StreamWriter(File.OpenWrite(sPath)))
                     {
-                        // if( !mod.isBaseMod() && !mod.isAddon() )
-                        sw.WriteLine(mod.getId() + ":" + (mod.isEnabled() ? "true" : "false"));
+                        sw.WriteLine("UseConfigIgnoreAppData:true");
+
+                        // The mod control file needs to be in reverse order ... :(
+                        List<CMod> revList = lbInst.Items.Cast<CMod>().ToList();
+                        revList.Reverse();
+
+                        foreach (CMod mod in revList)
+                        {
+                            // if( !mod.isBaseMod() && !mod.isAddon() )
+                            sw.WriteLine(mod.getId() + ":" + (mod.isEnabled() ? "true" : "false"));
+                        }
                     }
                 }
+                catch(Exception ex)
+                {
+                    MessageBox.Show("Error while writing the mod control file!\nError code:\n\n" + ex.Message);
+                }
+
             }
         }
 
@@ -425,13 +452,18 @@ namespace LPLauncher
                 {
                     int idx = 0;
                     List<String> itemList = new List<string>();
+
                     while (!sr.EndOfStream)
                     {
                         string line = sr.ReadLine();
 
                         if (!line.StartsWith("UseConfigIgnoreAppData") && line.IndexOf(':') > 1)
                         {
-                            itemList.Add(line);
+                            // Test if the item already exists
+                            if (!itemList.Contains(line))
+                                itemList.Add(line);
+                            else if(!line.StartsWith("vin_Base"))
+                                Debug.Print("Duplicate mod item in control file: " + line);
                         }
                     }
 
@@ -553,8 +585,7 @@ namespace LPLauncher
                     CMod instMod = findInstalledModWithId(newMod.getId());
                     if (instMod == null)
                     {
-                        m_ModsInstalled.Add(newMod.getId(), newMod);
-                        lbInst.Items.Add(newMod);
+                        RefreshLocalMods();
                     }
                 }
             }
@@ -562,6 +593,34 @@ namespace LPLauncher
 
         private CMod InstallMod(CMod mod, bool askToReplace = false)
         {
+            if( mod.getDependencies() != null && mod.getDependencies().Length>0 )
+            {
+                // Test if the dependency is met
+                CMod dep = findInstalledModWithId(mod.getDependencies());
+                if(dep==null)
+                {
+                    DialogResult dr = System.Windows.Forms.DialogResult.Cancel;
+                    dep = findRepoModWithId(mod.getDependencies());
+
+                    if (dep != null)
+                    {
+                        dr = MessageBox.Show("The mod '" + mod.getName() + "' requires the mod '" + mod.getDependencies() + "' to be installed.\n\nCurrently I cannot find that module in your game but I have it in my repository.\n\nShall I install it?", mod.getDisplayName() + ": missing dependency!", MessageBoxButtons.YesNoCancel);
+                        if (dr == System.Windows.Forms.DialogResult.Yes)
+                        {
+                            InstallMod(dep, true);
+                        }
+                        else if (dr == System.Windows.Forms.DialogResult.Cancel)
+                            return null;
+                    }
+                    else
+                    {
+                        dr = MessageBox.Show("The mod '" + mod.getName() + "' requires the mod '" + mod.getDependencies() + "' to be installed.\n\nCurrently I cannot find that module in your game and I don't find it in my repository.\n\nContinue anyways?", mod.getDisplayName() + ": missing dependency!", MessageBoxButtons.YesNo);
+                        if (dr == System.Windows.Forms.DialogResult.No)
+                            return null;
+                    }
+                }
+            }
+
             using (WebClient wc = new WebClient())
             {
                 try
@@ -583,12 +642,12 @@ namespace LPLauncher
                         // Test if already installed
                         bool install = true;
                         string dest = m_sPath + MOD_SUBFOLDER + name;
-                        if (Directory.Exists(dest))
+                        if (!mod.isPatch() && Directory.Exists(dest))       // patches always override
                         {
                             DialogResult dr = System.Windows.Forms.DialogResult.Yes;
                             if(askToReplace)
                             {
-                                dr = MessageBox.Show("Replace existing mod?", "Already installed!", MessageBoxButtons.YesNo);
+                                dr = MessageBox.Show("Replace existing mod?", mod.getDisplayName() + ": already installed!", MessageBoxButtons.YesNo);
                             }
 
                             if (dr == System.Windows.Forms.DialogResult.Yes)
@@ -599,11 +658,18 @@ namespace LPLauncher
 
                         if (install)
                         {
-                            Directory.Move(subFolders[0], dest);
-
-                            if( mod.getDevMessage() != null )
+                            if (mod.getDevMessage() != null)
                             {
                                 MessageBox.Show(mod.getDevMessage(), "Message from mod " + mod.getName());
+                            }
+
+                            if (mod.isPatch())
+                            {
+                                DirectoryCopy(subFolders[0], dest, true);
+                            }
+                            else
+                            {
+                                Directory.Move(subFolders[0], dest);
                             }
 
                             // Test if the mod file exists
@@ -618,7 +684,7 @@ namespace LPLauncher
                                 modFileInfo = folder.GetFiles("*.lpaddon")[0];
                             }
 
-                            if( modFileInfo != null )
+                            if (modFileInfo != null)
                             {
                                 CMod newMod = new CMod(mod.getName(), dest);
                                 newMod.setFileName(modFileInfo.FullName);
@@ -641,7 +707,7 @@ namespace LPLauncher
                         }
 
                         DialogResult dr = System.Windows.Forms.DialogResult.Yes;
-                        dr = MessageBox.Show("The package contains multiple folders.\nIt may replace / modify several existing mods (which is OK for a patch).\nProceed with installation?\n\n(If unsure check the mod description again...)", "Install patch mod?", MessageBoxButtons.YesNo);
+                        dr = MessageBox.Show("The package contains multiple folders.\n\nIt may replace / modify several existing mods (which is OK for patches or bundles).\n\nProceed with installation?\n\n(If unsure check the mod description again...)", mod.getDisplayName() + ": Install?", MessageBoxButtons.YesNo);
                         
                         if (dr == System.Windows.Forms.DialogResult.Yes)
                         {
@@ -679,7 +745,7 @@ namespace LPLauncher
             List<CMod> modsToUpdate = new List<CMod>();
             string sModsToUpdate = "";
 
-            foreach( CMod modAvail in m_ModsAvailable )
+            foreach( CMod modAvail in m_ModsAvailable.Values )
             {
                 CMod found = findInstalledModWithId(modAvail.getId());
                 if( found != null )
@@ -723,6 +789,15 @@ namespace LPLauncher
             else
                 MessageBox.Show("All your modules are up to date.", "No updates found");
 
+        }
+
+        private CMod findRepoModWithId(string id)
+        {
+            if (m_ModsAvailable.ContainsKey(id))
+            {
+                return m_ModsAvailable[id];
+            }
+            return null;
         }
 
         private CMod findInstalledModWithId(string id)
