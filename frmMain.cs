@@ -329,13 +329,13 @@ namespace LPLauncher
 
             try
             {
-                float fInst = float.Parse(m_sLifePlayVersionInstalled, CultureInfo.InvariantCulture);
-                float fAvail = float.Parse(m_sLifePlayVersionAvailable, CultureInfo.InvariantCulture);
+                string [] aInst = m_sLifePlayVersionInstalled.Split('.');
+                string[] aAvail = m_sLifePlayVersionAvailable.Split('.');
 
-                int majorInst = (int)fInst;
-                int majorAvail = (int)fAvail;
-                int minorInst = int.Parse((fInst - majorInst).ToString().Substring(2));
-                int minorAvail = int.Parse((fAvail - majorAvail).ToString().Substring(2));
+                int majorInst = int.Parse(aInst[0]);
+                int majorAvail = int.Parse(aAvail[0]);
+                int minorInst = int.Parse(aInst[1]);
+                int minorAvail = int.Parse(aAvail[1]);
 
                 if (majorInst <= majorAvail)
                 {
